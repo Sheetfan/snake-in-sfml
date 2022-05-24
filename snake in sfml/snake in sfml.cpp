@@ -22,7 +22,7 @@ public:
 		this->setFillColor(sf::Color::White);
 		this->setOutlineColor(sf::Color::Black);
 		this->setOutlineThickness(5.f);
-		this->direction = sf::Vector2f(40, 0);
+		this->direction = sf::Vector2f(0, 0);
 	}
 	~Snake() {
 	
@@ -185,6 +185,7 @@ void set(std::vector<Snake>& length, class Food& food, class Snake& snake, Gamep
 	length[0].setPosition(2 * 40, 8 * 40);
 	length[1].setPosition(3 * 40, 8 * 40);
 	length[2].setPosition(4 * 40, 8 * 40);
+	length[length.size() - 1].setFillColor(sf::Color(255, 143, 1));
 	food.randomPosition(length);
 	snake.setSpeed(sf::Vector2f(40, 0));
 	snake.active = true;
@@ -197,7 +198,9 @@ void eating(std::vector<Snake>& length, Snake& snake, Food& food, Gameplay& game
 	*/
 	if (length[length.size() - 1].getPosition() == food.getPosition()) {
 		food.randomPosition(length);
+		length[length.size() - 1].setFillColor(sf::Color::White);
 		snake.Grow(length, snake);
+		length[length.size() - 1].setFillColor(sf::Color(255, 143, 1));
 		game.increaseScore();
 
 
