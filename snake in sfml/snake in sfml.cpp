@@ -74,7 +74,7 @@ public:
 	void dead(std::vector<Snake>& length, sf::RenderWindow& window, int &timerM) { 
 		//if the snake head is greater then the edge of the screen kill the snake
 		if (length[length.size() - 1].getPosition().x < 0 - 5.f || length[length.size() - 1].getPosition().x +5.f > window.getSize().x ||
-			length[length.size() - 1].getPosition().y - 5.f < 0 || length[length.size() - 1].getPosition().y +5.f > window.getSize().y) {
+			length[length.size() - 1].getPosition().y < 0 - 5.f || length[length.size() - 1].getPosition().y +5.f > window.getSize().y) {
 
 			this->active = false;
 
@@ -199,6 +199,7 @@ void eating(std::vector<Snake>& length, Snake& snake, Food& food, Gameplay& game
 		food.randomPosition(length);
 		snake.Grow(length, snake);
 		game.increaseScore();
+
 
 	}
 }
