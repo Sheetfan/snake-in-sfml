@@ -8,103 +8,9 @@
 #include <string>
 #include <sstream>
 
-class Snake: public sf::RectangleShape {
-	sf::Vector2f direction;//this stores the direction of the head of the snake
-	int speed = 10; // the speed of the snake
-	int directionNot = 2; // to make sure the user cann'y move the head of the snake in to its self
 
-public:
-	bool active = true;
-
-	Snake() {
-		//sets the size, colour and direction of the snake
-		this->setSize(sf::Vector2f(35.f, 35.f));
-		this->setFillColor(sf::Color::White);
-		this->setOutlineColor(sf::Color::Black);
-		this->setOutlineThickness(5.f);
-		this->direction = sf::Vector2f(0, 0);
-	}
-	~Snake() {
-	
-	}
-	void Grow(std::vector<Snake> &length,Snake snake) {
-		//it will grow the snake by one
-		snake.setPosition(length[length.size() - 1].getPosition());
-		length.push_back(Snake(snake));
-	}
-	
-	void movements() {
-		//the movement keys
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && directionNot != 1) {
-			this->direction = sf::Vector2f(0, -40);
-			directionNot = 3;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && directionNot != 0) {
-			this->direction = sf::Vector2f(40, 0);
-			directionNot = 2;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && directionNot != 3) {
-			this->direction = sf::Vector2f(0, 40);
-			directionNot = 1;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && directionNot != 2) {
-			this->direction = sf::Vector2f(-40, 0);
-			directionNot = 0;
-		}
-	}
-	sf::Vector2f getMovement() {
-		return this->direction;
-	}
-	void movement(int &timerM, std::vector<Snake> &length) {
-		/*the snake will move the snake if the speed timer it the same as the game timer*/
-		if (timerM == speed) {
-			timerM = 0;
-			 
-			for (int i = 0; i < length.size() - 1; i++) {
-				length[i].setPosition(length[i + 1].getPosition());
-				
-			}
-			length[length.size() - 1].move(this->getMovement());
-		}
-	}
-
-	void setSpeed(sf::Vector2f dir) {
-		this->direction = dir;
-	}
-	void dead(std::vector<Snake>& length, sf::RenderWindow& window, int &timerM) { 
-		//if the snake head is greater then the edge of the screen kill the snake
-		if (length[length.size() - 1].getPosition().x < 0 - 5.f || length[length.size() - 1].getPosition().x +5.f > window.getSize().x ||
-			length[length.size() - 1].getPosition().y < 0 - 5.f || length[length.size() - 1].getPosition().y +5.f > window.getSize().y) {
-
-			this->active = false;
-
-		}
-		if (timerM == speed) {
-			/*if the speed timer is the same as the game timer if will check if the snake head position is 
-			the same as all the other parts of the snake and if it is end game.
-			*/
-			timerM = 0;
-			
-			for (int i = 0; i < length.size() - 1; i++) {
-				if (length[length.size() - 1].getPosition() == length[i].getPosition()) {
-					this->active = false;
-					
-					break;
-				}
-			}
-		}
-		
-
-	}
-
-
-	
-	/*void() {
-		
-	}*/
-
-};
-
+class Food;
+class Snake;
 class Gameplay:public sf::Text{
 	sf::Font font;
 		
@@ -133,10 +39,110 @@ public:
 	void increaseScore() {
 		this->score++;
 	}
-	
+	void set(std::vector<Snake>& length, class Food& food, class Snake& snake);
 	
 };
 
+class Snake : public sf::RectangleShape {
+	sf::Vector2f direction;//this stores the direction of the head of the snake
+	int speed = 10; // the speed of the snake
+	int directionNot = 2; // to make sure the user cann'y move the head of the snake in to its self
+	bool canMove = true; //
+public:
+	bool active = true;
+
+	Snake() {
+		//sets the size, colour and direction of the snake
+		this->setSize(sf::Vector2f(35.f, 35.f));
+		this->setFillColor(sf::Color::White);
+		this->setOutlineColor(sf::Color::Black);
+		this->setOutlineThickness(5.f);
+		this->direction = sf::Vector2f(0, 0);
+	}
+	~Snake() {
+
+	}
+	void Grow(std::vector<Snake>& length, Snake snake) {
+		//it will grow the snake by one
+		snake.setPosition(length[length.size() - 1].getPosition());
+		length.push_back(Snake(snake));
+	}
+
+	void movements(int count) {
+		//the movement keys
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && directionNot != 1 && this->canMove) {
+			this->direction = sf::Vector2f(0, -40);
+			directionNot = 3;
+			canMove = false;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && directionNot != 3 && this->canMove) {
+			this->direction = sf::Vector2f(0, 40);
+			directionNot = 1;
+			canMove = false;
+		}
+
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && directionNot != 0 && this->canMove) {
+			this->direction = sf::Vector2f(40, 0);
+			directionNot = 2;
+			canMove = false;
+		}
+		
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && directionNot != 2 && this->canMove) {
+			this->direction = sf::Vector2f(-40, 0);
+			directionNot = 0;
+			canMove = false;
+		}
+
+		if (count == this->speed) {
+			canMove = true;
+		}
+	}
+	sf::Vector2f getMovement() {
+		return this->direction;
+	}
+	void movement(float& timerM, std::vector<Snake>& length) {
+		/*the snake will move the snake if the speed timer it the same as the game timer*/
+		if (timerM >= speed) {
+			timerM = 0.0;
+
+			for (int i = 0; i < length.size() - 1; i++) {
+				length[i].setPosition(length[i + 1].getPosition());
+
+			}
+			length[length.size() - 1].move(this->getMovement());
+		}
+	}
+
+	void setSpeed(sf::Vector2f dir) {
+		this->direction = dir;
+	}
+	void dead(std::vector<Snake>& length, sf::RenderWindow& window, float& timerM) {
+		//if the snake head is greater then the edge of the screen kill the snake
+		if (length[length.size() - 1].getPosition().x < 0 - 5.f || length[length.size() - 1].getPosition().x + 5.f > window.getSize().x ||
+			length[length.size() - 1].getPosition().y < 0 - 5.f || length[length.size() - 1].getPosition().y + 5.f > window.getSize().y) {
+
+			this->active = false;
+
+		}
+		if (timerM >= speed) {
+			/*if the speed timer is the same as the game timer if will check if the snake head position is
+			the same as all the other parts of the snake and if it is end game.
+			*/
+			timerM = 0.0;
+
+			for (int i = 0; i < length.size() - 1; i++) {
+				if (length[length.size() - 1].getPosition() == length[i].getPosition()) {
+					this->active = false;
+
+					break;
+				}
+			}
+		}
+
+
+	}
+	void eating(std::vector<Snake>& length, Food& food, Gameplay& game, Snake snake);
+};
 class Food: public sf::RectangleShape {
 	sf::Vector2f position;
 public:
@@ -178,8 +184,8 @@ public:
 };
 
 //sets the game up
-void set(std::vector<Snake>& length, class Food& food, class Snake& snake, Gameplay& game) {
-	game.score = 0;
+void Gameplay::set(std::vector<Snake>& length, class Food& food, class Snake& snake) {
+	score = 0;
 	length.clear();
 	length = { Snake(),Snake(),Snake() };
 	length[0].setPosition(2 * 40, 8 * 40);
@@ -191,7 +197,7 @@ void set(std::vector<Snake>& length, class Food& food, class Snake& snake, Gamep
 	snake.active = true;
 }
 
-void eating(std::vector<Snake>& length, Snake& snake, Food& food, Gameplay& game, int &timerM) {
+void Snake::eating(std::vector<Snake>& length, Food& food, Gameplay& game, Snake snake) {
 	/*
 		if the snake head position is the same as the food position then grow the snake; set a new food position
 		and increase the snake score by one
@@ -199,7 +205,7 @@ void eating(std::vector<Snake>& length, Snake& snake, Food& food, Gameplay& game
 	if (length[length.size() - 1].getPosition() == food.getPosition()) {
 		food.randomPosition(length);
 		length[length.size() - 1].setFillColor(sf::Color::White);
-		snake.Grow(length, snake);
+		this->Grow(length,snake);
 		length[length.size() - 1].setFillColor(sf::Color(255, 143, 1));
 		game.increaseScore();
 
@@ -208,34 +214,35 @@ void eating(std::vector<Snake>& length, Snake& snake, Food& food, Gameplay& game
 }
 int main() {
 	srand(time(NULL));
-	int timerM  = 0;
-	int timerd = 0;
-
+	float timerM  = 0.0;
+	float timerd = 0;
+	float dt = 0.0;
+	sf::Clock clock;
 	sf::RenderWindow window(sf::VideoMode(1000,800),"Snake", sf::Style::Close);
-	window.setFramerateLimit(60);
+	window.setFramerateLimit(1);
 
 	Gameplay game("fonts/NotoSans-Bold.ttf");
 
 	Snake snake;	
-	std::vector<Snake> length;;
+	std::vector<Snake> length;
 
 	Food food;
 
-	set(length,food,snake,game);
+	game.set(length,food,snake);
 
 	while (window.isOpen()) {	
 		sf::Event event;
-
+		
 		while (window.pollEvent(event)) {
 			if (event.type == event.Closed) {
 				window.close();
 			}
 		}
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !snake.active) {
-			set(length, food, snake, game);
+			game.set(length, food, snake);
 		}
 		while (snake.active) {
-
+			dt = clock.restart().asSeconds();
 			while (window.pollEvent(event)) {
 				if (event.type == event.Closed) {
 					window.close();
@@ -246,10 +253,10 @@ int main() {
 			window.clear(sf::Color::Black);
 			
 			//snake controls
-			snake.movements();
+			snake.movements(timerM);
 
 			//snake eating
-			eating(length, snake, food, game, timerM);
+			snake.eating(length, food, game,snake);
 
 			//snake movement
 			snake.movement(timerM, length);
@@ -268,8 +275,9 @@ int main() {
 			window.draw(food);
 			window.draw(game);
 			window.display();
-			timerd++;
-			timerM++;
+			timerd += dt * 58.82352941;
+			timerM += dt * 58.82352941;
+			std::cout << timerM << "\n";
 		}
 		
 		
