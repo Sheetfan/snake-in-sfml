@@ -1,20 +1,18 @@
 #include "Gameplay.h"
 #include "Snake.h"
 #include "Food.h"
+#include <iostream>
 
 int main() {
 	srand(time(NULL));
 	float timerM  = 0.0;
 	float timerd = 0;
 	//float dt = 0.0;
-	sf::Time timePerFrame = sf::seconds(1.f / 60.f);
+	sf::Time timePerFrame = sf::seconds(1.f / 620.f);
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 	sf::Clock clock;
-	
-	
 	sf::RenderWindow window(sf::VideoMode(1000,800),"Snake", sf::Style::Close);
-	window.setFramerateLimit(60);
-	
+	//window.setFramerateLimit(60);
 	
 	Gameplay game("fonts/NotoSans-Bold.ttf");
 
@@ -38,6 +36,7 @@ int main() {
 		}
 		while (snake.active) {
 			timeSinceLastUpdate += clock.restart();
+			std::cout << timeSinceLastUpdate.asSeconds() << "\n";
 			//dt = clock.restart().asSeconds();
 			while (window.pollEvent(event)) {
 				if (event.type == event.Closed) {
