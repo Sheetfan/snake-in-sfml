@@ -1,7 +1,6 @@
 #include "Gameplay.h"
 #include "Snake.h"
 #include "Food.h"
-#include <iostream>
 
 int main() {
 	srand(time(NULL));
@@ -36,7 +35,6 @@ int main() {
 		}
 		while (snake.active) {
 			timeSinceLastUpdate += clock.restart();
-			std::cout << timeSinceLastUpdate.asSeconds() << "\n";
 			//dt = clock.restart().asSeconds();
 			while (window.pollEvent(event)) {
 				if (event.type == event.Closed) {
