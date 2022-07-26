@@ -1,10 +1,10 @@
-#snake in sfml
+# snake in sfml
 
-##Controls:
-<sup> 
+## Controls:
+
 w - to move up
 a - to move left
 s - to move down
 d - to move right 
 r - to reset game
-</sup>
+
