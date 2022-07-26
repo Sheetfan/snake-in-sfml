@@ -2,9 +2,9 @@
 
 ## Controls:
 
-w - to move up
-a - to move left
-s - to move down
-d - to move right 
-r - to reset game
+w - to move up <br/>
+a - to move left <br/>
+s - to move down <br/>
+d - to move right <br/>
+r - to reset game<br/>
 
